@@ -1,11 +1,16 @@
 import { notFound, redirect } from "next/navigation";
+import { PageHeader } from "@/components/layout/page-header";
+import { EmptyState } from "@/components/layout/empty-state";
+import { SectionCard } from "@/components/layout/section-card";
+import { ApplicationStatusBadge } from "@/components/shared/status-badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getCurrentUser } from "@/lib/auth/session";
 import { jobService } from "@/server/services/job.service";
 import { applicationService } from "@/server/services/application.service";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ApplicationStatusSelect } from "@/features/applications/application-status-select";
 import { ScheduleInterviewForm } from "@/features/interviews/schedule-interview-form";
-import { applicationStatusLabels, formatDateTime } from "@/lib/format";
+import { formatDateTime } from "@/lib/format";
+import { Users } from "lucide-react";
 
 interface ApplicantsPageProps {
   params: Promise<{ id: string }>;
@@ -22,48 +27,66 @@ export default async function ApplicantsPage({ params }: ApplicantsPageProps) {
   const applications = await applicationService.getByJob(id);
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Applicants</h1>
-        <p className="text-muted-foreground">{job.title} — {applications.length} applicant(s)</p>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        title="Applicants"
+        description={`${job.title} — ${applications.length} applicant(s)`}
+      />
 
       {applications.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            No applications yet for this job.
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={Users}
+          title="No applicants yet"
+          description="Applications will appear here once candidates apply to this job."
+        />
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {applications.map((app) => (
-            <Card key={app.id}>
-              <CardHeader className="flex flex-row items-start justify-between">
-                <div>
-                  <CardTitle>{app.applicant.name}</CardTitle>
-                  <p className="text-sm text-muted-foreground">{app.applicant.email}</p>
-                  {app.applicant.profile?.headline && (
-                    <p className="text-sm">{app.applicant.profile.headline}</p>
+            <SectionCard key={app.id}>
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="flex gap-4">
+                  <Avatar className="size-12">
+                    <AvatarFallback className="bg-primary/10 text-base font-semibold text-primary">
+                      {app.applicant.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h3 className="font-semibold">{app.applicant.name}</h3>
+                    <p className="text-sm text-muted-foreground">{app.applicant.email}</p>
+                    {app.applicant.profile?.headline && (
+                      <p className="mt-1 text-sm">{app.applicant.profile.headline}</p>
+                    )}
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Applied {formatDateTime(app.createdAt)}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end gap-2">
+                  <ApplicationStatusBadge status={app.status} />
+                  <ApplicationStatusSelect applicationId={app.id} currentStatus={app.status} />
+                </div>
+              </div>
+
+              {(app.coverLetter || app.cvFileName) && (
+                <div className="mt-4 space-y-3 rounded-lg bg-muted/40 p-4">
+                  {app.coverLetter && (
+                    <div>
+                      <p className="text-xs font-semibold uppercase text-muted-foreground">Cover Letter</p>
+                      <p className="mt-1 text-sm">{app.coverLetter}</p>
+                    </div>
+                  )}
+                  {app.cvFileName && (
+                    <p className="text-sm">
+                      <span className="font-medium">CV: </span>{app.cvFileName}
+                    </p>
                   )}
                 </div>
-                <ApplicationStatusSelect applicationId={app.id} currentStatus={app.status} />
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-xs text-muted-foreground">
-                  Applied {formatDateTime(app.createdAt)} · Status: {applicationStatusLabels[app.status]}
-                </p>
-                {app.coverLetter && (
-                  <div>
-                    <p className="text-sm font-medium">Cover Letter</p>
-                    <p className="text-sm text-muted-foreground">{app.coverLetter}</p>
-                  </div>
-                )}
-                {app.cvFileName && (
-                  <p className="text-sm">CV: {app.cvFileName}</p>
-                )}
+              )}
+
+              <div className="mt-4 border-t border-border pt-4">
                 <ScheduleInterviewForm applicationId={app.id} />
-              </CardContent>
-            </Card>
+              </div>
+            </SectionCard>
           ))}
         </div>
       )}

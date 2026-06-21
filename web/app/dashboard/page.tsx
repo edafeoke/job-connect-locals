@@ -1,7 +1,15 @@
 import { redirect } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import {
+  FileText,
+  Calendar,
+  Briefcase,
+  Bell,
+} from "lucide-react";
+import { PageHeader } from "@/components/layout/page-header";
+import { StatCard } from "@/components/layout/stat-card";
+import { SectionCard } from "@/components/layout/section-card";
 import { LinkButton } from "@/components/shared/link-button";
+import { Progress } from "@/components/ui/progress";
 import { getCurrentUser } from "@/lib/auth/session";
 import { applicationService } from "@/server/services/application.service";
 import { interviewService } from "@/server/services/interview.service";
@@ -30,68 +38,64 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold">Welcome back, {user.name.split(" ")[0]}</h1>
-        <p className="text-muted-foreground">Your dashboard overview</p>
-      </div>
+      <PageHeader
+        title={`Welcome back, ${user.name.split(" ")[0]}`}
+        description="Here's what's happening with your job search and hiring activity."
+      />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Applications</CardTitle>
-          </CardHeader>
-          <CardContent><p className="text-2xl font-bold">{applications.length}</p></CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Upcoming Interviews</CardTitle>
-          </CardHeader>
-          <CardContent><p className="text-2xl font-bold">{interviews.length}</p></CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Active Jobs Posted</CardTitle>
-          </CardHeader>
-          <CardContent><p className="text-2xl font-bold">{totalJobs}</p></CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Unread Notifications</CardTitle>
-          </CardHeader>
-          <CardContent><p className="text-2xl font-bold">{unreadCount}</p></CardContent>
-        </Card>
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard label="Applications" value={applications.length} icon={FileText} variant="blue" />
+        <StatCard label="Upcoming Interviews" value={interviews.length} icon={Calendar} variant="green" />
+        <StatCard label="Jobs Posted" value={totalJobs} icon={Briefcase} variant="amber" />
+        <StatCard label="Unread Notifications" value={unreadCount} icon={Bell} variant="slate" />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader><CardTitle>Profile Completion</CardTitle></CardHeader>
-          <CardContent className="space-y-4">
-            <Progress value={profileCompletion} />
+        <SectionCard title="Profile Completion">
+          <div className="space-y-4">
+            <div className="flex items-end justify-between">
+              <span className="text-4xl font-bold text-primary">{profileCompletion}%</span>
+              <span className="text-sm text-muted-foreground">complete</span>
+            </div>
+            <Progress value={profileCompletion} className="h-2" />
             <p className="text-sm text-muted-foreground">
-              {profileCompletion}% complete — add your CV and skills to stand out.
+              Add your CV and skills to stand out to employers.
             </p>
             <LinkButton href="/dashboard/seeker/profile" variant="outline" size="sm">
               Complete Profile
             </LinkButton>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader><CardTitle>Upcoming Interviews</CardTitle></CardHeader>
-          <CardContent>
-            {interviews.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No upcoming interviews</p>
-            ) : (
-              <ul className="space-y-3">
-                {interviews.slice(0, 3).map((interview) => (
-                  <li key={interview.id} className="text-sm">
+          </div>
+        </SectionCard>
+
+        <SectionCard title="Upcoming Interviews">
+          {interviews.length === 0 ? (
+            <p className="py-4 text-sm text-muted-foreground">No upcoming interviews scheduled.</p>
+          ) : (
+            <ul className="divide-y divide-border">
+              {interviews.slice(0, 3).map((interview) => (
+                <li key={interview.id} className="flex gap-4 py-4 first:pt-0 last:pb-0">
+                  <div className="flex size-10 shrink-0 flex-col items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <span className="text-xs font-bold leading-none">
+                      {new Date(interview.scheduledAt).getDate()}
+                    </span>
+                    <span className="text-[10px] uppercase">
+                      {new Date(interview.scheduledAt).toLocaleString("en", { month: "short" })}
+                    </span>
+                  </div>
+                  <div>
                     <p className="font-medium">{interview.application.job.title}</p>
-                    <p className="text-muted-foreground">{formatDateTime(interview.scheduledAt)}</p>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
+                    <p className="text-sm text-muted-foreground">
+                      {interview.application.job.company.name}
+                    </p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {formatDateTime(interview.scheduledAt)}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </SectionCard>
       </div>
     </div>
   );

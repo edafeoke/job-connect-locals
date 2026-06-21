@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { PageHeader } from "@/components/layout/page-header";
 import { getCurrentUser } from "@/lib/auth/session";
 import { profileService } from "@/server/services/application.service";
 import { ProfileForm } from "@/features/applications/profile-form";
@@ -11,11 +12,11 @@ export default async function SeekerProfilePage() {
   const profile = await profileService.getByUserId(user.id);
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Your Profile</h1>
-        <p className="text-muted-foreground">Complete your profile to improve your applications</p>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        title="Your Profile"
+        description="Complete your profile to improve your applications"
+      />
       <ProfileForm profile={profile} />
     </div>
   );

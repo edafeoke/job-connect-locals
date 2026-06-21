@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { PageHeader } from "@/components/layout/page-header";
 import { getCurrentUser } from "@/lib/auth/session";
 import { companyService } from "@/server/services/company.service";
 import { CompanyForm } from "@/features/companies/company-form";
@@ -13,13 +14,15 @@ export default async function CompanyPage() {
   const company = companies[0] ?? null;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Company Profile</h1>
-        <p className="text-muted-foreground">
-          {company ? "Update your company information" : "Create your company to start posting jobs"}
-        </p>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        title="Company Profile"
+        description={
+          company
+            ? "Update your company information"
+            : "Create your company to start posting jobs"
+        }
+      />
       <CompanyForm company={company ?? undefined} />
     </div>
   );

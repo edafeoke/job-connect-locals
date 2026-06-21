@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
+import { PageHeader } from "@/components/layout/page-header";
+import { SectionCard } from "@/components/layout/section-card";
 import { getCurrentUser } from "@/lib/auth/session";
 import { companyService } from "@/server/services/company.service";
 import { JobForm } from "@/features/jobs/job-form";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const metadata = { title: "Post Job — JobConnect Locals" };
 
@@ -16,17 +17,14 @@ export default async function NewJobPage() {
   const company = companies[0];
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Post a New Job</h1>
-        <p className="text-muted-foreground">Posting as {company.name}</p>
-      </div>
-      <Card>
-        <CardHeader><CardTitle>Job Details</CardTitle></CardHeader>
-        <CardContent>
-          <JobForm companyId={company.id} />
-        </CardContent>
-      </Card>
+    <div className="space-y-8">
+      <PageHeader
+        title="Post a New Job"
+        description={`Posting as ${company.name}`}
+      />
+      <SectionCard title="Job Details">
+        <JobForm companyId={company.id} />
+      </SectionCard>
     </div>
   );
 }

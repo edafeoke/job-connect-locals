@@ -17,6 +17,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { AuthDivider } from "@/components/layout/auth-divider";
+import { GoogleSignInButton } from "@/components/shared/google-sign-in-button";
 import { toast } from "sonner";
 
 export function SignInForm() {
@@ -61,7 +63,7 @@ export function SignInForm() {
   return (
     <div className="space-y-6">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           <FormField
             control={form.control}
             name="email"
@@ -69,7 +71,7 @@ export function SignInForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="you@example.com" {...field} />
+                  <Input type="email" placeholder="you@example.com" className="h-11" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -84,45 +86,31 @@ export function SignInForm() {
                   <FormLabel>Password</FormLabel>
                   <Link
                     href="/forgot-password"
-                    className="text-xs text-primary hover:underline"
+                    className="text-xs font-medium text-primary hover:underline"
                   >
                     Forgot password?
                   </Link>
                 </div>
                 <FormControl>
-                  <Input type="password" {...field} />
+                  <Input type="password" className="h-11" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" className="h-11 w-full font-semibold" disabled={loading}>
             {loading ? "Signing in..." : "Sign in"}
           </Button>
         </form>
       </Form>
 
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
-        </div>
-      </div>
+      <AuthDivider />
 
-      <Button
-        type="button"
-        variant="outline"
-        className="w-full"
-        onClick={handleGoogleSignIn}
-      >
-        Continue with Google
-      </Button>
+      <GoogleSignInButton onClick={handleGoogleSignIn} />
 
       <p className="text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{" "}
-        <Link href="/sign-up" className="text-primary hover:underline">
+        <Link href="/sign-up" className="font-medium text-primary hover:underline">
           Sign up
         </Link>
       </p>

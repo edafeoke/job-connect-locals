@@ -1,9 +1,12 @@
 import { redirect } from "next/navigation";
+import { PageHeader } from "@/components/layout/page-header";
+import { StatCard } from "@/components/layout/stat-card";
+import { SectionCard } from "@/components/layout/section-card";
+import { Briefcase, CheckCircle, Users } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth/session";
 import { companyService } from "@/server/services/company.service";
 import { jobService } from "@/server/services/job.service";
 import { applicationService } from "@/server/services/application.service";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const metadata = { title: "Analytics — JobConnect Locals" };
 
@@ -27,50 +30,40 @@ export default async function EmployerAnalyticsPage() {
   );
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Analytics</h1>
-        <p className="text-muted-foreground">Overview of your hiring activity</p>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        title="Analytics"
+        description="Overview of your hiring activity"
+      />
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Jobs</CardTitle>
-          </CardHeader>
-          <CardContent><p className="text-2xl font-bold">{allJobs.length}</p></CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Published</CardTitle>
-          </CardHeader>
-          <CardContent><p className="text-2xl font-bold">{published}</p></CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Applicants</CardTitle>
-          </CardHeader>
-          <CardContent><p className="text-2xl font-bold">{totalApplicants}</p></CardContent>
-        </Card>
+        <StatCard label="Total Jobs" value={allJobs.length} icon={Briefcase} variant="blue" />
+        <StatCard label="Published" value={published} icon={CheckCircle} variant="green" />
+        <StatCard label="Total Applicants" value={totalApplicants} icon={Users} variant="amber" />
       </div>
 
-      <Card>
-        <CardHeader><CardTitle>Applicants by Job</CardTitle></CardHeader>
-        <CardContent>
-          {applicationsByJob.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No data yet</p>
-          ) : (
-            <ul className="space-y-2">
-              {applicationsByJob.map(({ title, count }) => (
-                <li key={title} className="flex justify-between text-sm">
-                  <span>{title}</span>
-                  <span className="font-medium">{count}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </CardContent>
-      </Card>
+      <SectionCard title="Applicants by Job">
+        {applicationsByJob.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No data yet.</p>
+        ) : (
+          <ul className="space-y-3">
+            {applicationsByJob.map(({ title, count }) => (
+              <li key={title} className="flex items-center gap-3">
+                <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full bg-primary transition-all"
+                    style={{
+                      width: `${totalApplicants ? (count / totalApplicants) * 100 : 0}%`,
+                    }}
+                  />
+                </div>
+                <span className="w-40 truncate text-sm">{title}</span>
+                <span className="w-8 text-right text-sm font-semibold">{count}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </SectionCard>
     </div>
   );
 }

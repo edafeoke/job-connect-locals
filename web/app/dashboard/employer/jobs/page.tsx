@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
-import { Card, CardContent } from "@/components/ui/card";
+import { Briefcase } from "lucide-react";
+import { PageHeader } from "@/components/layout/page-header";
+import { EmptyState } from "@/components/layout/empty-state";
 import { LinkButton } from "@/components/shared/link-button";
 import { getCurrentUser } from "@/lib/auth/session";
 import { companyService } from "@/server/services/company.service";
@@ -15,16 +17,14 @@ export default async function EmployerJobsPage() {
   const companies = await companyService.getByOwner(user.id);
   if (companies.length === 0) {
     return (
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold">My Jobs</h1>
-        <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">Create a company profile first to post jobs.</p>
-            <LinkButton href="/dashboard/employer/company" className="mt-4">
-              Create Company
-            </LinkButton>
-          </CardContent>
-        </Card>
+      <div className="space-y-8">
+        <PageHeader title="My Jobs" description="Manage your job listings" />
+        <EmptyState
+          icon={Briefcase}
+          title="Create your company first"
+          description="Set up a company profile before posting job openings."
+          action={<LinkButton href="/dashboard/employer/company">Create Company</LinkButton>}
+        />
       </div>
     );
   }
@@ -34,24 +34,20 @@ export default async function EmployerJobsPage() {
   ).flat();
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">My Jobs</h1>
-          <p className="text-muted-foreground">Manage your job listings</p>
-        </div>
-        <LinkButton href="/dashboard/employer/jobs/new">Post New Job</LinkButton>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        title="My Jobs"
+        description="Manage your job listings and applicants"
+        actions={<LinkButton href="/dashboard/employer/jobs/new">Post New Job</LinkButton>}
+      />
 
       {allJobs.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">No jobs yet.</p>
-            <LinkButton href="/dashboard/employer/jobs/new" className="mt-4">
-              Post your first job
-            </LinkButton>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={Briefcase}
+          title="No jobs posted yet"
+          description="Create your first job listing to start receiving applications."
+          action={<LinkButton href="/dashboard/employer/jobs/new">Post your first job</LinkButton>}
+        />
       ) : (
         <EmployerJobsTable jobs={allJobs} />
       )}

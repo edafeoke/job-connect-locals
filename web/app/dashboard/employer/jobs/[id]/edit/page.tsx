@@ -1,8 +1,9 @@
 import { notFound, redirect } from "next/navigation";
+import { PageHeader } from "@/components/layout/page-header";
+import { SectionCard } from "@/components/layout/section-card";
 import { getCurrentUser } from "@/lib/auth/session";
 import { jobService } from "@/server/services/job.service";
 import { JobForm } from "@/features/jobs/job-form";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface EditJobPageProps {
   params: Promise<{ id: string }>;
@@ -17,17 +18,11 @@ export default async function EditJobPage({ params }: EditJobPageProps) {
   if (!job || job.company.ownerId !== user.id) notFound();
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Edit Job</h1>
-        <p className="text-muted-foreground">{job.title}</p>
-      </div>
-      <Card>
-        <CardHeader><CardTitle>Job Details</CardTitle></CardHeader>
-        <CardContent>
-          <JobForm companyId={job.companyId} job={job} />
-        </CardContent>
-      </Card>
+    <div className="space-y-8">
+      <PageHeader title="Edit Job" description={job.title} />
+      <SectionCard title="Job Details">
+        <JobForm companyId={job.companyId} job={job} />
+      </SectionCard>
     </div>
   );
 }

@@ -10,7 +10,6 @@ import {
   savedJobService,
 } from "@/server/services/application.service";
 import { interviewService } from "@/server/services/interview.service";
-import { notificationService } from "@/server/services/notification.service";
 import { adminService } from "@/server/services/admin.service";
 import { jobSchema } from "@/lib/validations/job";
 import {
@@ -272,5 +271,3 @@ export async function getUnreadNotificationCountAction() {
   const session = await requireSession();
   return notificationRepository.countUnread(session.user.id);
 }
-
-export { notificationService };

@@ -1,3 +1,6 @@
+import { PageHeader } from "@/components/layout/page-header";
+import { SectionCard } from "@/components/layout/section-card";
+import { JobStatusBadge } from "@/components/shared/status-badge";
 import { adminService } from "@/server/services/admin.service";
 import {
   Table,
@@ -7,9 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { CloseJobButton } from "@/features/admin/close-job-button";
-import { jobStatusLabels } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 export const metadata = { title: "Admin Jobs — JobConnect Locals" };
 
@@ -17,34 +19,34 @@ export default async function AdminJobsPage() {
   const { jobs } = await adminService.getJobs();
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Jobs Moderation</h1>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Title</TableHead>
-            <TableHead>Company</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Applicants</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {jobs.map((job) => (
-            <TableRow key={job.id}>
-              <TableCell className="font-medium">{job.title}</TableCell>
-              <TableCell>{job.company.name}</TableCell>
-              <TableCell>
-                <Badge variant="outline">{jobStatusLabels[job.status]}</Badge>
-              </TableCell>
-              <TableCell>{job._count.applications}</TableCell>
-              <TableCell>
-                {job.status !== "CLOSED" && <CloseJobButton jobId={job.id} />}
-              </TableCell>
+    <div className="space-y-8">
+      <PageHeader title="Jobs Moderation" description="Review and manage job listings" />
+      <SectionCard contentClassName="p-0">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/40 hover:bg-muted/40">
+              <TableHead className="font-semibold">Title</TableHead>
+              <TableHead className="font-semibold">Company</TableHead>
+              <TableHead className="font-semibold">Status</TableHead>
+              <TableHead className="font-semibold">Applicants</TableHead>
+              <TableHead className="text-right font-semibold">Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {jobs.map((job, i) => (
+              <TableRow key={job.id} className={cn(i % 2 === 1 && "bg-muted/20")}>
+                <TableCell className="font-medium">{job.title}</TableCell>
+                <TableCell className="text-muted-foreground">{job.company.name}</TableCell>
+                <TableCell><JobStatusBadge status={job.status} /></TableCell>
+                <TableCell className="font-semibold text-primary">{job._count.applications}</TableCell>
+                <TableCell className="text-right">
+                  {job.status !== "CLOSED" && <CloseJobButton jobId={job.id} />}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </SectionCard>
     </div>
   );
 }

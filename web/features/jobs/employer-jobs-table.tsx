@@ -2,7 +2,9 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
+import { LinkButton } from "@/components/shared/link-button";
+import { JobStatusBadge } from "@/components/shared/status-badge";
+import { SectionCard } from "@/components/layout/section-card";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -12,9 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { LinkButton } from "@/components/shared/link-button";
 import { updateJobStatusAction } from "@/server/actions/index";
-import { jobStatusLabels } from "@/lib/format";
 import { toast } from "sonner";
 import type { Job, JobStatus } from "@prisma/client";
 
@@ -31,48 +31,54 @@ export function EmployerJobsTable({ jobs }: { jobs: JobWithCount[] }) {
         toast.error(result.error);
         return;
       }
-      toast.success(`Job ${jobStatusLabels[status].toLowerCase()}`);
+      toast.success(`Job ${status.toLowerCase()}`);
       router.refresh();
     });
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Title</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Applicants</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {jobs.map((job) => (
-          <TableRow key={job.id}>
-            <TableCell className="font-medium">{job.title}</TableCell>
-            <TableCell><Badge variant="outline">{jobStatusLabels[job.status]}</Badge></TableCell>
-            <TableCell>{job._count.applications}</TableCell>
-            <TableCell className="space-x-2">
-              <LinkButton href={`/dashboard/employer/jobs/${job.id}/edit`} variant="outline" size="sm">
-                Edit
-              </LinkButton>
-              <LinkButton href={`/dashboard/employer/jobs/${job.id}/applicants`} variant="outline" size="sm">
-                Applicants
-              </LinkButton>
-              {job.status === "DRAFT" && (
-                <Button size="sm" disabled={pending} onClick={() => updateStatus(job.id, "PUBLISHED")}>
-                  Publish
-                </Button>
-              )}
-              {job.status === "PUBLISHED" && (
-                <Button size="sm" variant="secondary" disabled={pending} onClick={() => updateStatus(job.id, "CLOSED")}>
-                  Close
-                </Button>
-              )}
-            </TableCell>
+    <SectionCard title="All Jobs" contentClassName="p-0">
+      <Table>
+        <TableHeader>
+          <TableRow className="bg-muted/40 hover:bg-muted/40">
+            <TableHead className="font-semibold">Title</TableHead>
+            <TableHead className="font-semibold">Status</TableHead>
+            <TableHead className="font-semibold">Applicants</TableHead>
+            <TableHead className="text-right font-semibold">Actions</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {jobs.map((job, i) => (
+            <TableRow key={job.id} className={i % 2 === 1 ? "bg-muted/20" : undefined}>
+              <TableCell className="font-medium">{job.title}</TableCell>
+              <TableCell><JobStatusBadge status={job.status} /></TableCell>
+              <TableCell>
+                <span className="font-semibold text-primary">{job._count.applications}</span>
+              </TableCell>
+              <TableCell>
+                <div className="flex flex-wrap justify-end gap-2">
+                  <LinkButton href={`/dashboard/employer/jobs/${job.id}/edit`} variant="outline" size="sm">
+                    Edit
+                  </LinkButton>
+                  <LinkButton href={`/dashboard/employer/jobs/${job.id}/applicants`} variant="outline" size="sm">
+                    Applicants
+                  </LinkButton>
+                  {job.status === "DRAFT" && (
+                    <Button size="sm" disabled={pending} onClick={() => updateStatus(job.id, "PUBLISHED")}>
+                      Publish
+                    </Button>
+                  )}
+                  {job.status === "PUBLISHED" && (
+                    <Button size="sm" variant="secondary" disabled={pending} onClick={() => updateStatus(job.id, "CLOSED")}>
+                      Close
+                    </Button>
+                  )}
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </SectionCard>
   );
 }

@@ -17,6 +17,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { AuthDivider } from "@/components/layout/auth-divider";
+import { GoogleSignInButton } from "@/components/shared/google-sign-in-button";
 import { toast } from "sonner";
 
 export function SignUpForm() {
@@ -59,7 +61,7 @@ export function SignUpForm() {
   return (
     <div className="space-y-6">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           <FormField
             control={form.control}
             name="name"
@@ -67,7 +69,7 @@ export function SignUpForm() {
               <FormItem>
                 <FormLabel>Full Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Your name" {...field} />
+                  <Input placeholder="Your name" className="h-11" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -80,7 +82,7 @@ export function SignUpForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="you@example.com" {...field} />
+                  <Input type="email" placeholder="you@example.com" className="h-11" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -93,39 +95,25 @@ export function SignUpForm() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" {...field} />
+                  <Input type="password" className="h-11" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" className="h-11 w-full font-semibold" disabled={loading}>
             {loading ? "Creating account..." : "Create account"}
           </Button>
         </form>
       </Form>
 
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
-        </div>
-      </div>
+      <AuthDivider />
 
-      <Button
-        type="button"
-        variant="outline"
-        className="w-full"
-        onClick={handleGoogleSignIn}
-      >
-        Continue with Google
-      </Button>
+      <GoogleSignInButton onClick={handleGoogleSignIn} />
 
       <p className="text-center text-sm text-muted-foreground">
         Already have an account?{" "}
-        <Link href="/sign-in" className="text-primary hover:underline">
+        <Link href="/sign-in" className="font-medium text-primary hover:underline">
           Sign in
         </Link>
       </p>

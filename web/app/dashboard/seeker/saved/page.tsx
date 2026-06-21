@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
+import { Bookmark } from "lucide-react";
+import { PageHeader } from "@/components/layout/page-header";
+import { EmptyState } from "@/components/layout/empty-state";
+import { LinkButton } from "@/components/shared/link-button";
+import { JobCard } from "@/components/shared/job-card";
 import { getCurrentUser } from "@/lib/auth/session";
 import { savedJobService } from "@/server/services/application.service";
-import { JobCard } from "@/components/shared/job-card";
-import { Card, CardContent } from "@/components/ui/card";
 
 export const metadata = { title: "Saved Jobs — JobConnect Locals" };
 
@@ -14,23 +16,21 @@ export default async function SavedJobsPage() {
   const savedJobs = await savedJobService.getByUser(user.id);
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Saved Jobs</h1>
-        <p className="text-muted-foreground">Jobs you&apos;ve bookmarked</p>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        title="Saved Jobs"
+        description="Jobs you've bookmarked for later"
+      />
 
       {savedJobs.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">No saved jobs yet.</p>
-            <Link href="/jobs" className="mt-2 inline-block text-primary hover:underline">
-              Browse jobs →
-            </Link>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={Bookmark}
+          title="No saved jobs"
+          description="Save jobs while browsing to review them here later."
+          action={<LinkButton href="/jobs">Browse Jobs</LinkButton>}
+        />
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           {savedJobs.map(({ job }) => (
             <JobCard key={job.id} job={job} />
           ))}

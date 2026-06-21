@@ -16,6 +16,13 @@ import { LinkButton } from "@/components/shared/link-button";
 import { NotificationBell } from "@/features/notifications/notification-bell";
 import { signOut, useSession } from "@/lib/auth/auth-client";
 import { LayoutDashboard, LogOut, User } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const navLinks = [
+  { href: "/jobs", label: "Browse Jobs" },
+  { href: "/#how-it-works", label: "How It Works" },
+  { href: "/#faq", label: "FAQ" },
+];
 
 export function SiteHeader() {
   const { data: session } = useSession();
@@ -29,19 +36,21 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-border/60 bg-background/95 shadow-sm backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Logo />
-        <nav className="hidden items-center gap-6 md:flex">
-          <Link href="/jobs" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-            Browse Jobs
-          </Link>
-          <Link href="/#how-it-works" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-            How It Works
-          </Link>
-          <Link href="/#faq" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-            FAQ
-          </Link>
+        <nav className="hidden items-center gap-1 md:flex">
+          {navLinks.map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className={cn(
+                "rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+              )}
+            >
+              {label}
+            </Link>
+          ))}
         </nav>
         <div className="flex items-center gap-2">
           {user ? (
@@ -50,8 +59,8 @@ export function SiteHeader() {
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <Button variant="ghost" className="relative size-9 rounded-full">
-                    <Avatar className="size-9">
-                      <AvatarFallback>
+                    <Avatar className="size-9 ring-2 ring-primary/20">
+                      <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
                         {user.name?.charAt(0).toUpperCase() ?? "U"}
                       </AvatarFallback>
                     </Avatar>

@@ -1,3 +1,6 @@
+import { PageHeader } from "@/components/layout/page-header";
+import { SectionCard } from "@/components/layout/section-card";
+import { ApplicationStatusBadge } from "@/components/shared/status-badge";
 import { adminService } from "@/server/services/admin.service";
 import {
   Table,
@@ -7,8 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { applicationStatusLabels, formatDateTime } from "@/lib/format";
+import { formatDateTime } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 export const metadata = { title: "Admin Applications — JobConnect Locals" };
 
@@ -16,38 +19,38 @@ export default async function AdminApplicationsPage() {
   const { applications } = await adminService.getApplications();
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Applications</h1>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Job</TableHead>
-            <TableHead>Applicant</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Applied</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {applications.map((app) => (
-            <TableRow key={app.id}>
-              <TableCell>
-                <p className="font-medium">{app.job.title}</p>
-                <p className="text-xs text-muted-foreground">{app.job.company.name}</p>
-              </TableCell>
-              <TableCell>
-                <p>{app.applicant.name}</p>
-                <p className="text-xs text-muted-foreground">{app.applicant.email}</p>
-              </TableCell>
-              <TableCell>
-                <Badge variant="outline">{applicationStatusLabels[app.status]}</Badge>
-              </TableCell>
-              <TableCell className="text-sm text-muted-foreground">
-                {formatDateTime(app.createdAt)}
-              </TableCell>
+    <div className="space-y-8">
+      <PageHeader title="Applications" description="Platform-wide application oversight" />
+      <SectionCard contentClassName="p-0">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/40 hover:bg-muted/40">
+              <TableHead className="font-semibold">Job</TableHead>
+              <TableHead className="font-semibold">Applicant</TableHead>
+              <TableHead className="font-semibold">Status</TableHead>
+              <TableHead className="font-semibold">Applied</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {applications.map((app, i) => (
+              <TableRow key={app.id} className={cn(i % 2 === 1 && "bg-muted/20")}>
+                <TableCell>
+                  <p className="font-medium">{app.job.title}</p>
+                  <p className="text-xs text-muted-foreground">{app.job.company.name}</p>
+                </TableCell>
+                <TableCell>
+                  <p>{app.applicant.name}</p>
+                  <p className="text-xs text-muted-foreground">{app.applicant.email}</p>
+                </TableCell>
+                <TableCell><ApplicationStatusBadge status={app.status} /></TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  {formatDateTime(app.createdAt)}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </SectionCard>
     </div>
   );
 }

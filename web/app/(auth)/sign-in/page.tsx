@@ -1,10 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { AuthFormShell } from "@/components/layout/auth-form-shell";
 import { SignInForm } from "@/features/auth/sign-in-form";
 import { Suspense } from "react";
 
@@ -14,16 +8,10 @@ export const metadata = {
 
 export default function SignInPage() {
   return (
-    <Card className="border-border/50 bg-card/80 shadow-xl backdrop-blur-sm">
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Welcome back</CardTitle>
-        <CardDescription>Sign in to your account</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Suspense>
-          <SignInForm />
-        </Suspense>
-      </CardContent>
-    </Card>
+    <AuthFormShell title="Welcome back" description="Sign in to your account">
+      <Suspense>
+        <SignInForm />
+      </Suspense>
+    </AuthFormShell>
   );
 }
