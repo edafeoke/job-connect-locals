@@ -6,7 +6,7 @@ Production-quality MVP for local job discovery and hiring in Nigeria.
 
 - **Next.js 16** (App Router)
 - **Better Auth** (email/password + Google OAuth)
-- **Prisma + SQLite** (development)
+- **Prisma + PostgreSQL** (SQLite was dev-only; use Postgres locally via Neon or Docker)
 - **Shadcn UI** + Tailwind CSS
 - **Resend** (email notifications)
 - **Vercel Blob** (CV uploads, optional)
@@ -36,7 +36,7 @@ Open [http://localhost:3000](http://localhost:3000)
 
 See [`.env.example`](.env.example). Required:
 
-- `DATABASE_URL` — SQLite path (e.g. `file:./dev.db`)
+- `DATABASE_URL` — PostgreSQL connection string (see [Deployment](#deployment))
 - `BETTER_AUTH_SECRET` — min 32 characters
 - `BETTER_AUTH_URL` / `NEXT_PUBLIC_APP_URL` — app URL
 
@@ -85,9 +85,48 @@ web/
 
 See [`docs/DATABASE.md`](docs/DATABASE.md) for schema details.
 
-## Deployment
+## Deployment (Vercel)
 
-Deploy to Vercel from the `web/` directory. Use PostgreSQL in production (update `DATABASE_URL` and Prisma provider).
+SQLite (`file:./dev.db`) **does not work** on Vercel — the filesystem is ephemeral and tables are never persisted.
+
+### 1. Add a PostgreSQL database
+
+Recommended: [Neon](https://neon.tech) via the Vercel Marketplace (Storage → Connect Database).
+
+Copy the **pooled** connection string (for serverless).
+
+### 2. Vercel project settings
+
+| Setting | Value |
+|---------|-------|
+| Root Directory | `web` |
+| Framework | Next.js |
+
+### 3. Environment variables
+
+| Variable | Production value |
+|----------|------------------|
+| `DATABASE_URL` | `postgresql://...` (Neon pooled URL) |
+| `BETTER_AUTH_SECRET` | Random 32+ char secret |
+| `BETTER_AUTH_URL` | `https://your-app.vercel.app` |
+| `NEXT_PUBLIC_APP_URL` | `https://your-app.vercel.app` |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob token (for CV uploads) |
+| `RESEND_API_KEY` / `EMAIL_FROM` | For email notifications |
+
+The build runs `prisma db push` to create tables automatically.
+
+### 4. Seed production (optional, once)
+
+After first successful deploy:
+
+```bash
+cd web
+DATABASE_URL="your-postgres-url" npm run db:seed
+```
+
+### 5. Redeploy
+
+Push to GitHub or trigger a redeploy in Vercel after updating `DATABASE_URL`.
 
 ## Roadmap
 

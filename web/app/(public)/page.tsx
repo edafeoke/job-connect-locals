@@ -11,15 +11,35 @@ import { LandingTestimonials } from "@/components/landing/landing-testimonials";
 import { LandingFAQ } from "@/components/landing/landing-faq";
 import { LandingCTA } from "@/components/landing/landing-cta";
 
+export const dynamic = "force-dynamic";
+
+async function getHomePageData() {
+  try {
+    const [featuredJobs, categoryCounts, jobCount, companyCount, applicationCount] =
+      await Promise.all([
+        jobService.getFeatured(6),
+        jobService.getCategoryCounts(),
+        jobRepository.countPublished(),
+        companyRepository.count(),
+        applicationRepository.count(),
+      ]);
+
+    return { featuredJobs, categoryCounts, jobCount, companyCount, applicationCount };
+  } catch (error) {
+    console.error("Failed to load homepage data:", error);
+    return {
+      featuredJobs: [],
+      categoryCounts: [],
+      jobCount: 0,
+      companyCount: 0,
+      applicationCount: 0,
+    };
+  }
+}
+
 export default async function HomePage() {
-  const [featuredJobs, categoryCounts, jobCount, companyCount, applicationCount] =
-    await Promise.all([
-      jobService.getFeatured(6),
-      jobService.getCategoryCounts(),
-      jobRepository.countPublished(),
-      companyRepository.count(),
-      applicationRepository.count(),
-    ]);
+  const { featuredJobs, categoryCounts, jobCount, companyCount, applicationCount } =
+    await getHomePageData();
 
   return (
     <div className="overflow-hidden">
