@@ -3,7 +3,8 @@ import { PageHeader } from "@/components/layout/page-header";
 import { EmptyState } from "@/components/layout/empty-state";
 import { SectionCard } from "@/components/layout/section-card";
 import { ApplicationStatusBadge } from "@/components/shared/status-badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/shared/user-avatar";
+import { RichTextContent } from "@/components/shared/rich-text-content";
 import { getCurrentUser } from "@/lib/auth/session";
 import { jobService } from "@/server/services/job.service";
 import { applicationService } from "@/server/services/application.service";
@@ -45,11 +46,12 @@ export default async function ApplicantsPage({ params }: ApplicantsPageProps) {
             <SectionCard key={app.id}>
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="flex gap-4">
-                  <Avatar className="size-12">
-                    <AvatarFallback className="bg-primary/10 text-base font-semibold text-primary">
-                      {app.applicant.name.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
+                  <UserAvatar
+                    name={app.applicant.name}
+                    imageUrl={app.applicant.image ?? app.applicant.profile?.avatarUrl}
+                    className="size-12"
+                    fallbackClassName="text-base"
+                  />
                   <div>
                     <h3 className="font-semibold">{app.applicant.name}</h3>
                     <p className="text-sm text-muted-foreground">{app.applicant.email}</p>
@@ -72,7 +74,9 @@ export default async function ApplicantsPage({ params }: ApplicantsPageProps) {
                   {app.coverLetter && (
                     <div>
                       <p className="text-xs font-semibold uppercase text-muted-foreground">Cover Letter</p>
-                      <p className="mt-1 text-sm">{app.coverLetter}</p>
+                      <div className="mt-1">
+                        <RichTextContent content={app.coverLetter} className="text-sm" />
+                      </div>
                     </div>
                   )}
                   {app.cvFileName && (

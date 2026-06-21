@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { MapPin, Clock, Building2, Banknote } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { CompanyAvatar } from "@/components/shared/user-avatar";
 import {
   formatCurrency,
   employmentTypeLabels,
@@ -16,11 +16,12 @@ export function JobCard({ job }: { job: JobWithCompany }) {
     <article className="group overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all hover:border-primary/30 hover:shadow-md">
       <div className="p-5">
         <div className="flex items-start gap-4">
-          <Avatar className="size-12 shrink-0 rounded-xl">
-            <AvatarFallback className="rounded-xl bg-primary/10 text-base font-bold text-primary">
-              {job.company.name.charAt(0)}
-            </AvatarFallback>
-          </Avatar>
+          <CompanyAvatar
+            name={job.company.name}
+            logoUrl={job.company.logoUrl}
+            className="size-12 shrink-0 rounded-xl"
+            fallbackClassName="rounded-xl text-base"
+          />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>

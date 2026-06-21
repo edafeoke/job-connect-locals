@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/layout/empty-state";
 import { SectionCard } from "@/components/layout/section-card";
 import { getCurrentUser } from "@/lib/auth/session";
 import { interviewService } from "@/server/services/interview.service";
+import { RichTextContent } from "@/components/shared/rich-text-content";
 import { formatDateTime } from "@/lib/format";
 
 export const metadata = { title: "Interviews — JobConnect Locals" };
@@ -66,9 +67,9 @@ export default async function SeekerInterviewsPage() {
                     </a>
                   )}
                   {interview.notes && (
-                    <p className="rounded-lg bg-muted/50 p-3 text-sm text-muted-foreground">
-                      {interview.notes}
-                    </p>
+                    <div className="rounded-lg bg-muted/50 p-3">
+                      <RichTextContent content={interview.notes} className="text-sm" />
+                    </div>
                   )}
                 </div>
               </div>

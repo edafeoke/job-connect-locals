@@ -7,7 +7,7 @@ import {
   Banknote,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { CompanyAvatar } from "@/components/shared/user-avatar";
 import { LinkButton } from "@/components/shared/link-button";
 import { Separator } from "@/components/ui/separator";
 import { jobService } from "@/server/services/job.service";
@@ -19,6 +19,7 @@ import {
   employmentTypeLabels,
   experienceLevelLabels,
 } from "@/lib/format";
+import { RichTextContent } from "@/components/shared/rich-text-content";
 import { ApplyButton } from "@/features/applications/apply-button";
 import { SaveJobButton } from "@/features/applications/save-job-button";
 
@@ -44,11 +45,12 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
       <div className="border-b border-border bg-primary px-4 py-10 text-primary-foreground sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-4xl flex-wrap items-start justify-between gap-6">
           <div className="flex items-start gap-4">
-            <Avatar className="size-16 shrink-0 rounded-xl border-2 border-white/20">
-              <AvatarFallback className="rounded-xl bg-white/15 text-2xl font-bold text-white">
-                {job.company.name.charAt(0)}
-              </AvatarFallback>
-            </Avatar>
+            <CompanyAvatar
+              name={job.company.name}
+              logoUrl={job.company.logoUrl}
+              className="size-16 shrink-0 rounded-xl border-2 border-white/20"
+              fallbackClassName="rounded-xl text-2xl text-white bg-white/15"
+            />
             <div>
               <Badge className="mb-2 border-white/20 bg-white/15 text-white hover:bg-white/20">
                 {job.category}
@@ -108,26 +110,26 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
 
           <section>
             <h2 className="text-lg font-semibold">Description</h2>
-            <p className="mt-3 whitespace-pre-wrap text-muted-foreground leading-relaxed">
-              {job.description}
-            </p>
+            <div className="mt-3">
+              <RichTextContent content={job.description} />
+            </div>
           </section>
 
           {job.requirements && (
             <section className="mt-8">
               <h2 className="text-lg font-semibold">Requirements</h2>
-              <p className="mt-3 whitespace-pre-wrap text-muted-foreground leading-relaxed">
-                {job.requirements}
-              </p>
+              <div className="mt-3">
+                <RichTextContent content={job.requirements} />
+              </div>
             </section>
           )}
 
           {job.benefits && (
             <section className="mt-8">
               <h2 className="text-lg font-semibold">Benefits</h2>
-              <p className="mt-3 whitespace-pre-wrap text-muted-foreground leading-relaxed">
-                {job.benefits}
-              </p>
+              <div className="mt-3">
+                <RichTextContent content={job.benefits} />
+              </div>
             </section>
           )}
         </div>

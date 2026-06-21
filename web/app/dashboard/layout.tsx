@@ -17,6 +17,7 @@ export default async function DashboardLayout({
         name: user.name,
         email: user.email,
         isAdmin: user.isAdmin,
+        imageUrl: user.image ?? user.profile?.avatarUrl ?? undefined,
       }}
       hasCompany={user.companies.length > 0}
     >

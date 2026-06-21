@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/shared/rich-text-editor";
 import { Label } from "@/components/ui/label";
 import { SectionCard } from "@/components/layout/section-card";
 import { updateProfileAction, uploadCvAction } from "@/server/actions/index";
@@ -59,12 +60,10 @@ export function ProfileForm({ profile }: { profile: Profile | null }) {
           </div>
           <div>
             <Label htmlFor="bio">Bio</Label>
-            <Textarea
-              id="bio"
+            <RichTextEditor
               name="bio"
               defaultValue={profile?.bio ?? ""}
-              rows={4}
-              className="mt-1.5"
+              placeholder="Tell employers about your experience and goals..."
             />
           </div>
           <div className="grid gap-4 sm:grid-cols-2">

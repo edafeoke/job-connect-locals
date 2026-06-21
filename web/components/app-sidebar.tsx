@@ -16,7 +16,10 @@ import {
   ScrollText,
   ExternalLink,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Logo } from "@/components/shared/logo";
+import { NavSecondary } from "@/components/nav-secondary";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -28,13 +31,19 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import type { LucideIcon } from "lucide-react";
 
 export type AppShellVariant = "dashboard" | "admin";
+
+export interface AppShellUser {
+  name: string;
+  email: string;
+  isAdmin: boolean;
+  imageUrl?: string;
+}
 
 interface NavItem {
   href: string;
@@ -43,13 +52,9 @@ interface NavItem {
   exact?: boolean;
 }
 
-interface DashboardSidebarProps {
-  variant?: AppShellVariant;
-  user: {
-    name: string;
-    email: string;
-    isAdmin: boolean;
-  };
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  shellVariant: AppShellVariant;
+  user: AppShellUser;
   hasCompany?: boolean;
 }
 
@@ -64,9 +69,10 @@ function NavLink({ item }: { item: NavItem }) {
       <SidebarMenuButton
         isActive={isActive}
         render={<Link href={item.href} />}
+        tooltip={item.label}
         className={cn(
-          "h-10 rounded-lg font-medium",
-          isActive && "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+          isActive &&
+            "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
         )}
       >
         <item.icon className="size-4 shrink-0" />
@@ -103,19 +109,31 @@ const adminLinks: NavItem[] = [
   { href: "/admin/audit-log", label: "Audit Log", icon: ScrollText },
 ];
 
-export function DashboardSidebar({
-  variant = "dashboard",
+export function AppSidebar({
+  shellVariant = "dashboard",
   user,
   hasCompany = false,
-}: DashboardSidebarProps) {
+  ...props
+}: AppSidebarProps) {
+  const secondaryItems =
+    shellVariant === "dashboard"
+      ? [
+          {
+            title: "Browse public jobs",
+            url: "/jobs",
+            icon: <ExternalLink className="size-4" />,
+          },
+        ]
+      : [];
+
   return (
-    <Sidebar collapsible="offcanvas" className="border-r border-sidebar-border">
+    <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader className="border-b border-sidebar-border px-4 py-4">
         <Logo />
       </SidebarHeader>
 
       <SidebarContent className="px-2 py-4">
-        {variant === "admin" ? (
+        {shellVariant === "admin" ? (
           <SidebarGroup>
             <SidebarGroupLabel>Administration</SidebarGroupLabel>
             <SidebarGroupContent>
@@ -196,30 +214,16 @@ export function DashboardSidebar({
             )}
           </>
         )}
+
+        {secondaryItems.length > 0 && (
+          <NavSecondary items={secondaryItems} className="mt-auto" />
+        )}
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-sidebar-border p-4">
-        <div className="flex items-center gap-3 rounded-lg bg-sidebar-accent p-3">
-          <Avatar className="size-9">
-            <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
-              {user.name.charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold">{user.name}</p>
-            <p className="truncate text-xs text-muted-foreground">{user.email}</p>
-          </div>
-        </div>
-        {variant === "dashboard" && (
-          <Link
-            href="/jobs"
-            className="mt-3 flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
-          >
-            <ExternalLink className="size-3.5" />
-            Browse public jobs
-          </Link>
-        )}
+      <SidebarFooter className="border-t border-sidebar-border p-2">
+        <NavUser user={user} shellVariant={shellVariant} />
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }

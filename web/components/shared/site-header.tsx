@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/shared/user-avatar";
 import { Logo } from "@/components/shared/logo";
 import { LinkButton } from "@/components/shared/link-button";
 import { NotificationBell } from "@/features/notifications/notification-bell";
@@ -59,11 +59,12 @@ export function SiteHeader() {
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <Button variant="ghost" className="relative size-9 rounded-full">
-                    <Avatar className="size-9 ring-2 ring-primary/20">
-                      <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
-                        {user.name?.charAt(0).toUpperCase() ?? "U"}
-                      </AvatarFallback>
-                    </Avatar>
+                    <UserAvatar
+                      name={user.name ?? "User"}
+                      imageUrl={user.image}
+                      className="size-9 ring-2 ring-primary/20"
+                      fallbackClassName="text-sm"
+                    />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">

@@ -4,7 +4,7 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/shared/rich-text-editor";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -58,7 +58,12 @@ export function JobForm({
       </div>
       <div>
         <Label htmlFor="description">Description</Label>
-        <Textarea id="description" name="description" defaultValue={job?.description} rows={6} required className="mt-1" />
+        <RichTextEditor
+          name="description"
+          defaultValue={job?.description ?? ""}
+          placeholder="Describe the role, responsibilities, and team..."
+          required
+        />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
@@ -117,11 +122,19 @@ export function JobForm({
       </div>
       <div>
         <Label htmlFor="requirements">Requirements</Label>
-        <Textarea id="requirements" name="requirements" defaultValue={job?.requirements ?? ""} className="mt-1" />
+        <RichTextEditor
+          name="requirements"
+          defaultValue={job?.requirements ?? ""}
+          placeholder="List qualifications and skills..."
+        />
       </div>
       <div>
         <Label htmlFor="benefits">Benefits</Label>
-        <Textarea id="benefits" name="benefits" defaultValue={job?.benefits ?? ""} className="mt-1" />
+        <RichTextEditor
+          name="benefits"
+          defaultValue={job?.benefits ?? ""}
+          placeholder="Highlight perks and benefits..."
+        />
       </div>
       <div>
         <Label htmlFor="applicationDeadline">Application Deadline</Label>

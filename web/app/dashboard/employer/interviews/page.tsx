@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/layout/empty-state";
 import { SectionCard } from "@/components/layout/section-card";
 import { getCurrentUser } from "@/lib/auth/session";
 import { interviewService } from "@/server/services/interview.service";
+import { RichTextContent } from "@/components/shared/rich-text-content";
 import { formatDateTime } from "@/lib/format";
 
 export const metadata = { title: "Employer Interviews — JobConnect Locals" };
@@ -46,6 +47,11 @@ export default async function EmployerInterviewsPage() {
               <div className="mt-3 space-y-1 text-sm text-muted-foreground">
                 {interview.location && <p>Location: {interview.location}</p>}
                 {interview.meetingLink && <p>Link: {interview.meetingLink}</p>}
+                {interview.notes && (
+                  <div className="pt-2">
+                    <RichTextContent content={interview.notes} className="text-sm" />
+                  </div>
+                )}
               </div>
             </SectionCard>
           ))}

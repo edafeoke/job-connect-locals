@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/shared/rich-text-editor";
 import { Label } from "@/components/ui/label";
 import { applyToJobAction } from "@/server/actions/index";
 import { toast } from "sonner";
@@ -52,13 +52,10 @@ export function ApplyButton({ jobId }: { jobId: string }) {
           </p>
           <div>
             <Label htmlFor="coverLetter">Cover Letter (optional)</Label>
-            <Textarea
-              id="coverLetter"
-              className="mt-2"
-              rows={5}
-              placeholder="Tell the employer why you're a great fit..."
+            <RichTextEditor
               value={coverLetter}
-              onChange={(e) => setCoverLetter(e.target.value)}
+              onChange={setCoverLetter}
+              placeholder="Tell the employer why you're a great fit..."
             />
           </div>
           <Button onClick={handleApply} disabled={pending} className="w-full">

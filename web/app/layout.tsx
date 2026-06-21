@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { env } from "@/lib/env";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -16,12 +17,29 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
   title: {
     default: "JobConnect Locals — Find Local Jobs in Nigeria",
     template: "%s | JobConnect Locals",
   },
   description:
     "Connect with local employers and find job opportunities across Nigeria. Post jobs, apply with your CV, and schedule interviews.",
+  openGraph: {
+    title: "JobConnect Locals — Find Local Jobs in Nigeria",
+    description:
+      "Connect with local employers and find job opportunities across Nigeria. Post jobs, apply with your CV, and schedule interviews.",
+    siteName: "JobConnect Locals",
+    locale: "en_NG",
+    type: "website",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "JobConnect Locals" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "JobConnect Locals — Find Local Jobs in Nigeria",
+    description:
+      "Connect with local employers and find job opportunities across Nigeria.",
+    images: ["/opengraph-image"],
+  },
 };
 
 export default function RootLayout({

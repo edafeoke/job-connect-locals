@@ -18,6 +18,7 @@ export default async function AdminLayout({
         name: user.name,
         email: user.email,
         isAdmin: user.isAdmin,
+        imageUrl: user.image ?? user.profile?.avatarUrl ?? undefined,
       }}
     >
       {children}

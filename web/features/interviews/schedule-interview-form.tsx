@@ -4,7 +4,7 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/shared/rich-text-editor";
 import { Label } from "@/components/ui/label";
 import { scheduleInterviewAction } from "@/server/actions/index";
 import { toast } from "sonner";
@@ -46,7 +46,10 @@ export function ScheduleInterviewForm({ applicationId }: { applicationId: string
       </div>
       <div>
         <Label htmlFor="notes">Notes</Label>
-        <Textarea id="notes" name="notes" rows={3} className="mt-1" />
+        <RichTextEditor
+          name="notes"
+          placeholder="Add interview details or instructions..."
+        />
       </div>
       <Button type="submit" disabled={pending}>
         {pending ? "Scheduling..." : "Schedule Interview"}
