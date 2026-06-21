@@ -1,0 +1,71 @@
+"use client";
+
+import { useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { createCompanyAction, updateCompanyAction } from "@/server/actions/index";
+import { toast } from "sonner";
+import type { Company } from "@prisma/client";
+
+export function CompanyForm({ company }: { company?: Company }) {
+  const [pending, startTransition] = useTransition();
+  const router = useRouter();
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
+    startTransition(async () => {
+      const result = company
+        ? await updateCompanyAction(company.id, formData)
+        : await createCompanyAction(formData);
+
+      if (result.error) {
+        toast.error("Failed to save company");
+        return;
+      }
+      toast.success(company ? "Company updated" : "Company created");
+      router.push("/dashboard/employer/jobs");
+      router.refresh();
+    });
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="max-w-xl space-y-4">
+      <div>
+        <Label htmlFor="name">Company Name</Label>
+        <Input id="name" name="name" defaultValue={company?.name} required className="mt-1" />
+      </div>
+      <div>
+        <Label htmlFor="description">Description</Label>
+        <Textarea id="description" name="description" defaultValue={company?.description ?? ""} rows={4} className="mt-1" />
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <Label htmlFor="location">Location</Label>
+          <Input id="location" name="location" defaultValue={company?.location ?? ""} className="mt-1" />
+        </div>
+        <div>
+          <Label htmlFor="industry">Industry</Label>
+          <Input id="industry" name="industry" defaultValue={company?.industry ?? ""} className="mt-1" />
+        </div>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <Label htmlFor="website">Website</Label>
+          <Input id="website" name="website" type="url" defaultValue={company?.website ?? ""} className="mt-1" />
+        </div>
+        <div>
+          <Label htmlFor="size">Company Size</Label>
+          <Input id="size" name="size" placeholder="e.g. 10-50" defaultValue={company?.size ?? ""} className="mt-1" />
+        </div>
+      </div>
+      <Button type="submit" disabled={pending}>
+        {pending ? "Saving..." : company ? "Update Company" : "Create Company"}
+      </Button>
+    </form>
+  );
+}
