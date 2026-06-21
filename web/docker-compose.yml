@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: jobconnect-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: jobconnect
+      POSTGRES_PASSWORD: jobconnect
+      POSTGRES_DB: jobconnect
+    volumes:
+      - jobconnect_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jobconnect -d jobconnect"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  jobconnect_pg_data:

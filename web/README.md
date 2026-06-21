@@ -17,10 +17,13 @@ Production-quality MVP for local job discovery and hiring in Nigeria.
 cd web
 cp .env.example .env
 npm install
+npm run db:up          # start local Postgres (Docker)
 npm run db:push
 npm run db:seed
 npm run dev
 ```
+
+Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) for local Postgres. Without Docker, use a free [Neon](https://neon.tech) dev database and set `DATABASE_URL` in `.env`.
 
 Open [http://localhost:3000](http://localhost:3000)
 
@@ -54,6 +57,8 @@ Optional:
 | `npm run build` | Production build |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | TypeScript check |
+| `npm run db:up` | Start local Postgres (Docker) |
+| `npm run db:down` | Stop local Postgres |
 | `npm run db:push` | Sync Prisma schema |
 | `npm run db:seed` | Seed demo data |
 | `npm run db:studio` | Prisma Studio |

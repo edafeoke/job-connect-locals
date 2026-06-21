@@ -4,7 +4,7 @@ import { getSessionCookie } from "better-auth/cookies";
 const protectedRoutes = ["/dashboard", "/admin"];
 const authRoutes = ["/sign-in", "/sign-up", "/forgot-password"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionCookie = getSessionCookie(request);
 
@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (pathname.startsWith("/admin") && sessionCookie) {
-    // Admin check happens server-side in layout; middleware only ensures auth
+    // Admin check happens server-side in layout; proxy only ensures auth
   }
 
   return NextResponse.next();
